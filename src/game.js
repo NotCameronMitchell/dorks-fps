@@ -1,14 +1,13 @@
 import * as THREE from 'three';
 import { World, rayBox } from './world.js';
-import { makeCharacter, animateCharacter, makeCat, makeProjectile, makeCodeSprite, makeWeapon, GEO, mat } from './models.js';
+import { makeCharacter, animateCharacter, makeCat, makeProjectile, makeCodeSprite, makeViewArm, GEO, mat } from './models.js';
 import { HEROES } from './heroes.js';
 import { botThink } from './bots.js';
 
 const V = THREE.Vector3;
 const GRAV = 20, JUMP = 7.2, RESPAWN = 6, WIN_TIME = 80, CAP_TIME = 3.5;
 const TEAM_COL = [0x4ea8ff, 0xff5a5a];
-const CAT_COLS = [0xe08a3c, 0x26262b, 0x9aa0a8];
-const CAT_NAMES = ['Cat 1', 'Cat 2', 'Cat 3'];
+const CAT_NAMES = ['Bruno', 'Murphy', 'Wanda'];
 
 function dirFrom(yaw, pitch, out) {
   const cp = Math.cos(pitch);
@@ -107,15 +106,14 @@ export class Game {
     const L = this.player.hero.look, w = this.player.hero.weapon;
     const v = new THREE.Group();
     const add = (kind, x) => {
-      const arm = new THREE.Group();
-      const sleeve = new THREE.Mesh(GEO.BOX, mat(L.skin)); sleeve.scale.set(0.11, 0.5, 0.11); sleeve.position.y = 0.3; arm.add(sleeve);
-      arm.add(makeWeapon(kind));
-      arm.rotation.x = Math.PI / 2; arm.position.set(x, -0.27, -0.45);
+      const arm = makeViewArm(L, kind);
+      arm.rotation.x = Math.PI / 2; arm.position.set(x, -0.25, -0.16);
+      arm.scale.setScalar(1.25);
       v.add(arm); return arm;
     };
-    this.vmR = add(L.weapon, L.weapon === 'laptop' ? 0 : 0.26);
-    if (L.weapon === 'laptop') this.vmR.position.set(0, -0.36, -0.5);
-    this.vmL = L.offhand ? add(L.offhand, -0.26) : null;
+    this.vmR = add(L.weapon, L.weapon === 'laptop' ? 0 : 0.24);
+    if (L.weapon === 'laptop') this.vmR.position.set(0, -0.33, -0.12);
+    this.vmL = L.offhand ? add(L.offhand, -0.24) : null;
     this.vmMelee = !!w.melee;
     v.scale.setScalar(0.8);
     this.view = v;
@@ -334,7 +332,7 @@ export class Game {
   }
 
   cat(c, idx, big, dur) {
-    const model = makeCat(CAT_COLS[idx], big);
+    const model = makeCat(idx, big);
     const a = Math.random() * 6.28;
     const pos = new V(c.pos.x + Math.cos(a) * 0.8, c.pos.y + 0.2, c.pos.z + Math.sin(a) * 0.8);
     model.position.copy(pos); this.root.add(model);

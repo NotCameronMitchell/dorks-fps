@@ -27,7 +27,8 @@ On a phone: hold it sideways, and use "Add to Home Screen" for full screen.
 | --- | --- |
 | `src/heroes.js` | Roster: stats, looks, weapons, abilities, bot hints. Add a hero here. |
 | `src/maps.js` | Map layouts built from boxes and stairs. Add a map here. |
-| `src/models.js` | Procedural low-poly characters, weapons, cats, projectiles. |
+| `src/looks.js` | How each friend looks: proportions, colours, hair, hats, glasses, painted face and shirt. |
+| `src/models.js` | Builds the 3D characters, weapons, cats and projectiles in code (no model files). |
 | `src/game.js` | Match simulation: movement, damage, projectiles, zones, objective. |
 | `src/world.js` | Collision, raycasts, navigation grid and pathfinding. |
 | `src/bots.js` | Bot AI. |

@@ -1,15 +1,11 @@
 // Hero roster. Each hero: weapon, passive, 3 abilities, ultimate, and a "look" for the procedural model.
 // Abilities call into the Game API (g). `ai` hints tell bots when to press the button.
 
-const SKIN = { fair: 0xf1c9a5, light: 0xe8b98f, tan: 0xd9a066 };
+import { LOOKS } from './looks.js';
 
 const mason = {
   id: 'mason', name: 'Mason', role: 'dps', tagline: 'Wife guy. Cat dad. Red Devil.',
   hp: 200, speed: 6.5, radius: 0.4,
-  look: {
-    scale: 1.12, bulk: 0.95, skin: SKIN.fair, hair: 0x5a3a22, hairStyle: 'short', shirt: 0xda291c, pants: 0x111111, shoes: 0xf4f4f4, weapon: 'pistol',
-    extra: (p, { bx }) => { bx(p.torso, 0.3, 0.1, 0.02, 0xffe500, 0, 0.1, -0.16); bx(p.torso, 0.58, 0.06, 0.32, 0x111111, 0, 0.32, 0); bx(p.handL, 0.19, 0.05, 0.2, 0xd4af37, 0, 0.1, 0); },
-  },
   weapon: {
     name: 'Sidearm', icon: '🔫', rate: 4.5, range: 40, ranged: true,
     fire: (g, c) => g.hitscan(c, { dmg: 20, range: 60, spread: 0.012, falloff: [22, 45], color: 0xffd27a }),
@@ -18,7 +14,7 @@ const mason = {
   onKill: (g, c) => { g.heal(c, 40, c); g.status(c, 'speed', 3, 1.3); },
   abilities: [
     {
-      name: "Sic 'Em", icon: '🐈', cd: 9, desc: 'Summon one of his three cats to hunt the nearest enemy for 8s.', ai: { k: 'dmg', r: 30 },
+      name: "Sic 'Em", icon: '🐈', cd: 9, desc: 'Send Bruno, Murphy or Wanda (they take turns) to hunt the nearest enemy for 8s.', ai: { k: 'dmg', r: 30 },
       use: (g, c) => { g.cat(c, c.catIdx = ((c.catIdx || 0) + 1) % 3, false, 8); },
     },
     {
@@ -31,7 +27,7 @@ const mason = {
     },
   ],
   ult: {
-    name: 'Cat-astrophe', icon: '🐈‍⬛', cost: 1100, desc: 'All three cats arrive at once, huge and furious, for 10s. Mason speeds up.', ai: { k: 'dmg', r: 22 },
+    name: 'Cat-astrophe', icon: '🐈‍⬛', cost: 1100, desc: 'Bruno, Murphy and Wanda all arrive at once, huge and furious, for 10s. Mason speeds up.', ai: { k: 'dmg', r: 22 },
     use: (g, c) => { for (let i = 0; i < 3; i++) g.cat(c, i, true, 10); g.status(c, 'speed', 10, 1.25); },
   },
 };
@@ -39,10 +35,6 @@ const mason = {
 const cole = {
   id: 'cole', name: 'Cole', role: 'dps', tagline: 'Hotty Toddy. Nine iron. Wings.',
   hp: 250, speed: 6.0, radius: 0.42,
-  look: {
-    scale: 1.0, bulk: 1.05, skin: SKIN.light, hair: 0x6b4a2b, hairStyle: 'short', shirt: 0x14213d, sleeve: 0x14213d, pants: 0xcfc3a4, shoes: 0xffffff, weapon: 'club',
-    extra: (p, { bx }) => { bx(p.head, 0.44, 0.1, 0.44, 0xce1126, 0, 0.47, 0); bx(p.head, 0.4, 0.03, 0.2, 0xce1126, 0, 0.43, -0.28); bx(p.torso, 0.58, 0.08, 0.32, 0xce1126, 0, 0.18, 0); },
-  },
   weapon: {
     name: 'Nine Iron', icon: '🏌️', rate: 1.5, range: 3, melee: true,
     fire: (g, c) => {
@@ -81,10 +73,6 @@ const cole = {
 const james = {
   id: 'james', name: 'James', role: 'tank', tagline: 'Gym bro with a new job and a lunchbox.',
   hp: 550, speed: 5.3, radius: 0.55,
-  look: {
-    scale: 1.06, bulk: 1.5, skin: SKIN.light, hair: 0x2b2118, hairStyle: 'buzz', shirt: 0x2b2d42, sleeve: SKIN.light, pants: 0x3a3a3a, shoes: 0xe63946, weapon: 'fists', offhand: 'fists',
-    extra: (p, { bx }) => { bx(p.torso, 0.5, 0.2, 0.02, 0xffffff, 0, 0.08, -0.215); bx(p.head, 0.42, 0.06, 0.42, 0xe63946, 0, 0.36, 0); },
-  },
   weapon: {
     name: 'Fists', icon: '👊', rate: 2.2, range: 2.6, melee: true, twoHand: true,
     fire: (g, c) => {
@@ -126,13 +114,6 @@ const james = {
 const cam = {
   id: 'cam', name: 'Cam', role: 'dps', tagline: 'AI engineer. Ships slop at range.',
   hp: 200, speed: 5.7, radius: 0.4,
-  look: {
-    scale: 1.0, bulk: 1.0, skin: SKIN.fair, hair: 0x3b2a1e, hairStyle: 'short', shirt: 0xfcee0a, sleeve: 0x1b1b1b, pants: 0x1b1b24, shoes: 0x25e6ff, weapon: 'laptop',
-    extra: (p, { bx }) => {
-      bx(p.head, 0.44, 0.12, 0.44, 0x005a9c, 0, 0.47, 0); bx(p.head, 0.4, 0.03, 0.22, 0x005a9c, 0, 0.42, -0.29); bx(p.head, 0.1, 0.07, 0.02, 0xffffff, 0, 0.48, -0.225);
-      bx(p.torso, 0.06, 0.66, 0.31, 0x25e6ff, -0.2, 0, 0, true); bx(p.head, 0.42, 0.07, 0.03, 0x25e6ff, 0, 0.27, -0.215, true);
-    },
-  },
   weapon: {
     name: 'AI Slop', icon: '💻', rate: 3.6, range: 38, ranged: true, twoHand: true, pspeed: 46,
     fire: (g, c) => { if (c.st.stealth) delete c.st.stealth; g.shoot(c, { kind: 'code', speed: 46, dmg: 24, r: 0.3, life: 1.6 }); },
@@ -169,13 +150,6 @@ const cam = {
 const sarah = {
   id: 'sarah', name: 'Sarah', role: 'support', tagline: 'Band nerd. Dances through every cast.',
   hp: 200, speed: 5.8, radius: 0.38,
-  look: {
-    scale: 0.94, bulk: 0.9, skin: SKIN.fair, hair: 0x8a4b2a, hairStyle: 'pony', shirt: 0x3d348b, sleeve: 0x3d348b, pants: 0xf7f7f7, shoes: 0x111111, weapon: 'slingshot',
-    extra: (p, { bx, cy }) => {
-      cy(p.head, 0.36, 0.3, 0.36, 0x3d348b, 0, 0.6, 0); bx(p.head, 0.4, 0.04, 0.26, 0x111111, 0, 0.46, -0.2); cy(p.head, 0.1, 0.3, 0.1, 0xf7b801, 0, 0.9, 0);
-      bx(p.torso, 0.1, 0.66, 0.02, 0xf7b801, -0.12, 0, -0.16); bx(p.torso, 0.1, 0.66, 0.02, 0xf7b801, 0.12, 0, -0.16); bx(p.torso, 0.5, 0.08, 0.31, 0xf7b801, 0, -0.3, 0);
-    },
-  },
   weapon: {
     name: 'Slingshot', icon: '🪃', rate: 1.9, range: 32, ranged: true, pspeed: 52,
     fire: (g, c) => g.shoot(c, { kind: 'pellet', speed: 52, gravity: 4, dmg: 32, heal: 45, r: 0.35, life: 2 }),
@@ -210,10 +184,6 @@ const sarah = {
 const billy = {
   id: 'billy', name: 'Billy', role: 'support', tagline: 'Just such a good dude. Great drummer.',
   hp: 225, speed: 5.7, radius: 0.4,
-  look: {
-    scale: 1.02, bulk: 1.0, skin: SKIN.light, hair: 0x4a3323, hairStyle: 'messy', shirt: 0xff7b00, sleeve: 0xff7b00, pants: 0x274c77, shoes: 0xf4f4f4, weapon: 'sticks', offhand: 'tambourine',
-    extra: (p, { bx }) => { bx(p.torso, 0.3, 0.3, 0.02, 0x00a6fb, 0, 0.05, -0.16); bx(p.head, 0.3, 0.14, 0.02, 0x4a3323, 0, 0.08, -0.21); },
-  },
   weapon: {
     name: 'Drumsticks', icon: '🥢', rate: 4, range: 34, ranged: true, pspeed: 56,
     fire: (g, c) => g.shoot(c, { kind: 'stick', speed: 56, dmg: 18, r: 0.3, life: 1.4, spin: 20 }),
@@ -250,13 +220,6 @@ const billy = {
 const grant = {
   id: 'grant', name: 'Grant', role: 'tank', tagline: 'Eagle Scout. Metalhead. Caffeinated.',
   hp: 500, speed: 5.3, radius: 0.5,
-  look: {
-    scale: 1.08, bulk: 1.3, skin: SKIN.fair, hair: 0x1c1c1c, hairStyle: 'long', shirt: 0x151515, sleeve: 0x151515, pants: 0x4a5a3a, shoes: 0x111111, weapon: 'can',
-    extra: (p, { bx }) => {
-      bx(p.torso, 0.3, 0.22, 0.02, 0xdddddd, 0, 0.08, -0.2); bx(p.torso, 0.5, 0.1, 0.4, 0xc1121f, 0, 0.3, 0); bx(p.torso, 0.14, 0.2, 0.03, 0xc1121f, 0, 0.18, -0.21);
-      bx(p.head, 0.3, 0.16, 0.02, 0x1c1c1c, 0, 0.07, -0.21);
-    },
-  },
   weapon: {
     name: 'Energy Drinks', icon: '🥤', rate: 1.4, range: 15, ranged: true, pspeed: 21, lob: 16,
     fire: (g, c) => g.shoot(c, { kind: 'can', speed: 21, gravity: 16, dmg: 15, splash: 2.8, splashDmg: 38, r: 0.3, life: 3, spin: 12, color: 0x39d353 }),
@@ -304,17 +267,6 @@ const junk = (g, c, ult) => g.shoot(c, {
 const henry = {
   id: 'henry', name: 'Henry', role: 'dps', tagline: 'Thrift goblin. Fully jestermaxxed.',
   hp: 200, speed: 5.7, radius: 0.4,
-  look: {
-    scale: 1.0, bulk: 0.95, skin: SKIN.fair, hair: 0xb5651d, hairStyle: 'messy', shirt: 0x7b4fa3, sleeve: 0x2ec4b6, pants: 0xf2c14e, shoes: 0xe84a5f, weapon: 'launcher',
-    extra: (p, { bx, sp }) => {
-      // jester hat: two droopy horns with bells
-      bx(p.head, 0.44, 0.12, 0.44, 0xe84a5f, 0, 0.5, 0);
-      const l = bx(p.head, 0.14, 0.4, 0.14, 0x7b4fa3, -0.22, 0.66, 0); l.rotation.z = 0.8;
-      const r = bx(p.head, 0.14, 0.4, 0.14, 0x2ec4b6, 0.22, 0.66, 0); r.rotation.z = -0.8;
-      sp(p.head, 0.1, 0.1, 0.1, 0xffd700, -0.4, 0.78, 0); sp(p.head, 0.1, 0.1, 0.1, 0xffd700, 0.4, 0.78, 0);
-      bx(p.torso, 0.28, 0.66, 0.31, 0xe84a5f, 0.14, 0, 0); bx(p.torso, 0.62, 0.08, 0.36, 0xffd700, 0, 0.32, 0);
-    },
-  },
   weapon: {
     name: 'Junk Launcher', icon: '🧨', rate: 1.5, range: 20, ranged: true, twoHand: true, pspeed: 27, lob: 14,
     fire: (g, c) => junk(g, c, !!c.st.ultHenry),
@@ -366,10 +318,6 @@ const henry = {
 const sam = {
   id: 'sam', name: 'Sam', role: 'dps', tagline: 'Very, very, very short. Eats crimes.',
   hp: 175, speed: 6.3, radius: 0.3,
-  look: {
-    scale: 0.68, bulk: 0.9, skin: SKIN.fair, hair: 0x2a1a12, hairStyle: 'bob', shirt: 0x6a994e, sleeve: 0x6a994e, pants: 0x1d3557, shoes: 0xffffff, weapon: 'knife', offhand: 'knife',
-    extra: (p, { bx }) => { bx(p.torso, 0.36, 0.2, 0.03, 0x386641, 0, -0.15, -0.16); bx(p.head, 0.42, 0.08, 0.03, 0x2a1a12, 0, 0.38, -0.2); },
-  },
   weapon: {
     name: 'Knives', icon: '🔪', rate: 3.2, range: 2.3, melee: true, twoHand: true,
     fire: (g, c) => g.melee(c, { dmg: c.st.ultSam ? 36 : 28, range: 2.3, arc: 0.4, onHit: (t) => { if (c.st.ultSam) g.status(t, 'burn', 2, 12, c); } }),
@@ -406,5 +354,6 @@ const sam = {
 };
 
 export const HEROES = [mason, cole, cam, henry, sam, james, grant, sarah, billy];
+for (const h of HEROES) h.look = LOOKS[h.id];
 export const HERO = Object.fromEntries(HEROES.map((h) => [h.id, h]));
 export const ROLE = { dps: { name: 'Damage', icon: '⚔️' }, tank: { name: 'Tank', icon: '🛡️' }, support: { name: 'Support', icon: '➕' } };

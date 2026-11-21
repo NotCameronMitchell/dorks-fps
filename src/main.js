@@ -149,6 +149,7 @@ function layout() {
 addEventListener('resize', layout);
 addEventListener('orientationchange', () => setTimeout(layout, 200));
 
+const STILL = location.search.includes('still'); // debug: hold the preview model still
 let last = performance.now(), mt = 0;
 function frame(now) {
   requestAnimationFrame(frame);
@@ -159,7 +160,7 @@ function frame(now) {
   } else {
     mt += dt;
     if (preview) {
-      preview.rotation.y = Math.PI + Math.sin(mt * 0.7) * 0.9;
+      preview.rotation.y = Math.PI + (STILL ? 0.3 : Math.sin(mt * 0.7) * 0.9);
       const w = previewHero.weapon, cyc = mt % 3;
       animateCharacter(preview, { speed: 0, attackT: cyc < 0.25 ? 1 - cyc * 4 : 0, castT: previewHero.id === 'sarah' && cyc > 1.6 && cyc < 2.6 ? 2.6 - cyc : 0, castKind: Math.floor(mt / 3) % 4, pitch: 0, ranged: !w.melee, twoHand: w.twoHand, big: 1 }, dt, mt);
     }
