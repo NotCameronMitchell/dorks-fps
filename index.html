@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0d1a">
+<link rel="manifest" href="manifest.webmanifest">
+<title>DORKS</title>
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="menu" class="screen">
+  <div id="title" class="pane">
+    <h1>DORKS</h1>
+    <p class="sub">a 3v3 hero shooter starring the group chat</p>
+    <button id="play" class="big">PLAY</button>
+    <p class="hint">Best in landscape. Add to Home Screen for full screen.</p>
+  </div>
+  <div id="heroes" class="pane hidden">
+    <div class="col left">
+      <h2>PICK YOUR DORK</h2>
+      <div id="grid"></div>
+    </div>
+    <div class="col mid"></div>
+    <div class="col right">
+      <div id="info"></div>
+      <button id="next" class="big">NEXT ▶</button>
+    </div>
+  </div>
+  <div id="maps" class="pane hidden">
+    <h2>PICK A MAP</h2>
+    <div id="maplist"></div>
+    <button id="back" class="ghost">◀ BACK</button>
+  </div>
+</div>
+
+<div id="hud" class="hidden">
+  <div id="touchzone"></div>
+  <div id="vignette"></div>
+  <div id="objective">
+    <div class="score ally"><b id="s0">0%</b></div>
+    <div id="pt"><div id="ptfill"></div><span id="ptlabel">A</span></div>
+    <div class="score enemy"><b id="s1">0%</b></div>
+  </div>
+  <div id="status"></div>
+  <div id="banner"></div>
+  <div id="feed"></div>
+  <button id="pause">☰</button>
+  <div id="cross"><i></i><i></i><i></i><i></i><u id="hitm"></u></div>
+  <div id="respawn" class="hidden"></div>
+  <div id="vitals">
+    <div id="hname"></div>
+    <div id="hpbar"><div id="hpfill"></div><div id="overfill"></div><span id="hptext"></span></div>
+    <div id="buffs"></div>
+  </div>
+  <div id="stick"><div id="knob"></div></div>
+  <div id="buttons">
+    <button id="bult" class="ab ult"><span class="ic"></span><em></em><small>Q</small></button>
+    <button id="b0" class="ab"><span class="ic"></span><em></em><small>E</small></button>
+    <button id="b1" class="ab"><span class="ic"></span><em></em><small>⇧</small></button>
+    <button id="b2" class="ab"><span class="ic"></span><em></em><small>F</small></button>
+    <button id="bjump" class="ab jump"><span class="ic">⤒</span></button>
+    <button id="bfire" class="ab fire"><span class="ic"></span></button>
+  </div>
+</div>
+
+<div id="pausemenu" class="overlay hidden">
+  <div class="card">
+    <h2>PAUSED</h2>
+    <button id="resume" class="big">RESUME</button>
+    <button id="autofire" class="ghost"></button>
+    <button id="mute" class="ghost"></button>
+    <button id="quit" class="ghost">QUIT TO MENU</button>
+  </div>
+</div>
+
+<div id="end" class="overlay hidden">
+  <div class="card wide">
+    <h1 id="endtitle"></h1>
+    <table id="board"></table>
+    <div class="row"><button id="again" class="big">PLAY AGAIN</button><button id="tomenu" class="ghost">CHANGE HERO</button></div>
+  </div>
+</div>
+
+<div id="rotate">↻<br>Rotate your phone</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
