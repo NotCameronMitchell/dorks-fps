@@ -16,21 +16,43 @@ const CHAINS = { // bone -> the bone that marks where it ends (for the "hang str
   thigh_l: 'calf_l', calf_l: 'foot_l', thigh_r: 'calf_r', calf_r: 'foot_r',
 };
 
+// VRoid/VRM skeletons use different bone names; map them onto the ones this file drives
+const ALIAS = {
+  J_Bip_C_Spine: 'spine_01', J_Bip_C_Head: 'head',
+  J_Bip_L_UpperArm: 'upperarm_l', J_Bip_L_LowerArm: 'lowerarm_l', J_Bip_L_Hand: 'hand_l', J_Bip_R_UpperArm: 'upperarm_r', J_Bip_R_LowerArm: 'lowerarm_r', J_Bip_R_Hand: 'hand_r',
+  J_Bip_L_UpperLeg: 'thigh_l', J_Bip_L_LowerLeg: 'calf_l', J_Bip_L_Foot: 'foot_l', J_Bip_R_UpperLeg: 'thigh_r', J_Bip_R_LowerLeg: 'calf_r', J_Bip_R_Foot: 'foot_r',
+  J_Bip_L_ToeBase: 'ball_l',
+};
+let grad = null;
+function gradient() {
+  if (!grad) { grad = new THREE.DataTexture(new Uint8Array([165, 225, 255]), 3, 1, THREE.RedFormat); grad.minFilter = grad.magFilter = THREE.NearestFilter; grad.needsUpdate = true; }
+  return grad;
+}
+
 function prepare(gltf) {
   const proto = new THREE.Group();
   const inner = new THREE.Group(); inner.name = 'body';
-  gltf.scene.rotation.y = Math.PI; // exported facing +Z; the game faces -Z
   inner.add(gltf.scene); proto.add(inner);
+  const anime = !!(gltf.parser.json.extensions && (gltf.parser.json.extensions.VRM || gltf.parser.json.extensions.VRMC_vrm)) || gltf.parser.json.nodes.some((n) => n.name === 'J_Bip_C_Hips');
+  gltf.scene.traverse((o) => { if (ALIAS[o.name]) o.name = ALIAS[o.name]; });
+  proto.updateMatrixWorld(true);
+  // the game faces -Z: turn the model round if its toes point the other way
+  const foot = gltf.scene.getObjectByName('foot_l'), toe = gltf.scene.getObjectByName('ball_l');
+  if (foot && toe && toe.getWorldPosition(new V3()).z > foot.getWorldPosition(new V3()).z) gltf.scene.rotation.y = Math.PI;
   proto.updateMatrixWorld(true);
   // cheap unlit-ish materials instead of PBR
   gltf.scene.traverse((o) => {
     if (!o.isMesh) return;
-    const m = o.material, cut = m.transparent || m.alphaTest > 0;
-    o.material = new THREE.MeshLambertMaterial({ map: m.map, color: m.color, alphaTest: cut ? 0.45 : 0, side: cut ? THREE.DoubleSide : THREE.FrontSide });
+    const conv = (m) => {
+      const cut = m.transparent || m.alphaTest > 0;
+      const opts = { map: m.map, color: m.color, alphaTest: cut ? 0.45 : 0, side: cut || m.side === THREE.DoubleSide ? THREE.DoubleSide : THREE.FrontSide };
+      return anime ? new THREE.MeshToonMaterial({ ...opts, gradientMap: gradient() }) : new THREE.MeshLambertMaterial(opts);
+    };
+    o.material = Array.isArray(o.material) ? o.material.map(conv) : conv(o.material);
     o.frustumCulled = false;
   });
   const bones = {};
-  gltf.scene.traverse((o) => { if (o.isBone) bones[o.name] = o; });
+  gltf.scene.traverse((o) => { if (o.isBone || o.name in CHAINS || ['hand_l', 'hand_r', 'foot_l', 'foot_r', 'spine_01', 'head'].includes(o.name)) bones[o.name] = o; });
   const W = (n) => bones[n].getWorldQuaternion(new Q());
   const P = (n) => bones[n].getWorldPosition(new V3());
   const align = (n) => new Q().setFromUnitVectors(P(CHAINS[n]).sub(P(n)).normalize(), DOWN);
@@ -67,7 +89,7 @@ const _q = new Q(), _e = new THREE.Euler();
 class Rig {
   constructor(root, drv) {
     this.bones = {}; this.drv = drv;
-    root.traverse((o) => { if (o.isBone && (drv[o.name])) this.bones[o.name] = o; });
+    root.traverse((o) => { if (drv[o.name] && !this.bones[o.name]) this.bones[o.name] = o; });
   }
   set(name, euler) {
     const d = this.drv[name], b = this.bones[name];

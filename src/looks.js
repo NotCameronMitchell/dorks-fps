@@ -65,7 +65,7 @@ export const LOOKS = {
     },
   },
   cole: {
-    scale: 1.0, pose: 'club', weapon: 'club', tucked: true,
+    wide: 1.08, scale: 1.0, pose: 'club', weapon: 'club', tucked: true,
     body: { sh: 0.212, chest: [0.205, 0.138], waist: [0.2, 0.142], hip: [0.2, 0.135], arm: 0.054, leg: 0.082 },
     skin: 0xf0c4a2, hair: 0x33241a, hairStyle: 'part', hat: { type: 'visor', c: 0xce1126 },
     top: 0x8fa9d8, sleeve: 'short', sleeveC: 0x8fa9d8, bottom: 0x2b3350, legs: 'shorts', sock: 0xffffff, sockH: 'short', shoe: 0xf2efe8, sole: 0xe0dccf,
@@ -86,7 +86,7 @@ export const LOOKS = {
     },
   },
   james: {
-    scale: 1.06, pose: 'fists', weapon: 'fists', offhand: 'fists',
+    wide: 1.22, scale: 1.06, pose: 'fists', weapon: 'fists', offhand: 'fists',
     body: { sh: 0.262, chest: [0.25, 0.155], waist: [0.195, 0.135], hip: [0.2, 0.135], arm: 0.072, leg: 0.096 },
     skin: 0xd7a078, hair: 0x1f1712, hairStyle: 'curly', hat: { type: 'headband', c: 0x15151a },
     top: 0x15151a, sleeve: 'none', bottom: 0x15151a, legs: 'shorts', sock: 0xffffff, sockH: 'short', shoe: 0xf2f2f2, sole: 0xd8d8d8,
@@ -108,7 +108,7 @@ export const LOOKS = {
     },
   },
   cam: {
-    scale: 1.05, pose: 'two', weapon: 'laptop',
+    wide: 1.25, scale: 1.05, pose: 'two', weapon: 'laptop',
     body: { sh: 0.238, chest: [0.25, 0.172], waist: [0.268, 0.2], hip: [0.25, 0.18], arm: 0.062, leg: 0.096 },
     skin: 0xf3cbb4, hair: 0x3a2619, hairStyle: 'wolf',
     top: 0x121216, sleeve: 'short', sleeveC: 0x121216, bottom: 0xf1efe9, legs: 'shorts', sockH: 'none', shoe: 0x17171b, sole: 0xf4f4f4,
@@ -163,7 +163,7 @@ export const LOOKS = {
     },
   },
   grant: {
-    scale: 1.0, pose: 'throw', weapon: 'can',
+    wide: 1.1, scale: 1.0, pose: 'throw', weapon: 'can',
     body: { sh: 0.222, chest: [0.212, 0.142], waist: [0.2, 0.142], hip: [0.2, 0.135], arm: 0.058, leg: 0.09 },
     skin: 0xf1c7a8, hair: 0x5a4030, hairStyle: 'under', hat: { type: 'cap', c: 0xffffff, brim: 0xffffff, swatch: true },
     top: 0x7b7067, sleeve: 'short', sleeveC: 0x7b7067, bottom: 0x1a1a1e, legs: 'shorts', sock: 0xf7f7f7, sockH: 'crew', shoe: 0xb9bcc2, sole: 0xe9e9e9, chunky: true,

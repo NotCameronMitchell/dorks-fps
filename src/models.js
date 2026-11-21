@@ -350,6 +350,7 @@ export function makeCharacter(L) {
       const p = new PB(); weaponInto(p, kind);
       human.rig.hold(side, p.mesh(plainMat()), (L.scale || 1) / human.scale);
     }
+    if (L.wide) human.parts.body.scale.set(L.wide, 1, L.wide);
     human.root.userData = { parts: human.parts, rig: human.rig, look: L, phase: Math.random() * 6, jab: 1, lastAt: 0, base: 1 };
     return human.root;
   }
