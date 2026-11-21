@@ -354,6 +354,6 @@ const sam = {
 };
 
 export const HEROES = [mason, cole, cam, henry, sam, james, grant, sarah, billy];
-for (const h of HEROES) h.look = LOOKS[h.id];
+for (const h of HEROES) { h.look = LOOKS[h.id]; h.look.id = h.id; }
 export const HERO = Object.fromEntries(HEROES.map((h) => [h.id, h]));
 export const ROLE = { dps: { name: 'Damage', icon: '⚔️' }, tank: { name: 'Tank', icon: '🛡️' }, support: { name: 'Support', icon: '➕' } };

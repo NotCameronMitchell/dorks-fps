@@ -6,6 +6,7 @@ import { Game } from './game.js';
 import { Hud } from './hud.js';
 import { Input } from './input.js';
 import { Audio } from './audio.js';
+import { loadHumans } from './rig.js';
 
 const $ = (id) => document.getElementById(id);
 const canvas = $('c');
@@ -170,3 +171,6 @@ function frame(now) {
 }
 show('title');
 requestAnimationFrame(frame);
+// character models load in the background; refresh the menu once they are in
+$('play').disabled = true; $('play').textContent = 'LOADING…';
+loadHumans(HEROES.map((h) => h.id)).then(() => { $('play').disabled = false; $('play').textContent = 'PLAY'; if (state === 'title') show('title'); });

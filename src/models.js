@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { paintFace } from './looks.js';
+import { makeHuman } from './rig.js';
 
 // Characters are modelled in code: smooth lofted bodies and limbs, a painted face + shirt texture per friend,
 // and separate rigid segments (torso, head, upper/lower arms and legs) so they can bend at elbows and knees.
@@ -153,7 +154,7 @@ function weaponInto(p, kind) {
       break;
     case 'laptop':
       p.box(0x3b4050, 0.42, 0.29, 0.018, 0, -0.12, -0.02); p.box(0x23262f, 0.36, 0.17, 0.004, 0, -0.1, -0.031);
-      p.box(0x3b4050, 0.42, 0.018, 0.27, 0, -0.262, -0.155); p.add(PLANE, 0xffffff, xf(0, -0.251, -0.155, -PI / 2, 0, 0, 0.38, 0.23, 1), SWATCH_RECT);
+      p.box(0x3b4050, 0.42, 0.018, 0.27, 0, -0.262, -0.155); p.add(PLANE, 0x39ff88, xf(0, -0.251, -0.155, -PI / 2, 0, 0, 0.38, 0.23, 1));
       p.box(0x25e6ff, 0.43, 0.022, 0.012, 0, -0.262, -0.295); p.box(0xff2bd6, 0.012, 0.29, 0.02, 0.214, -0.12, -0.02); p.box(0x25e6ff, 0.012, 0.29, 0.02, -0.214, -0.12, -0.02);
       break;
     case 'slingshot':
@@ -341,19 +342,30 @@ function buildCharacter(L) {
 const protos = new Map();
 const PART_NAMES = ['body', 'torso', 'head', 'armL', 'armR', 'elbowL', 'elbowR', 'legL', 'legR', 'kneeL', 'kneeR'];
 export function makeCharacter(L) {
+  // preferred: the MakeHuman model for this friend, if its file was loaded
+  const human = makeHuman(L.id, 1.84 * (L.scale || 1));
+  if (human) {
+    for (const [side, kind] of [['r', L.weapon], ['l', L.offhand]]) {
+      if (!kind) continue;
+      const p = new PB(); weaponInto(p, kind);
+      human.rig.hold(side, p.mesh(plainMat()), (L.scale || 1) / human.scale);
+    }
+    human.root.userData = { parts: human.parts, rig: human.rig, look: L, phase: Math.random() * 6, jab: 1, lastAt: 0, base: 1 };
+    return human.root;
+  }
   if (!protos.has(L)) protos.set(L, buildCharacter(L));
   const root = protos.get(L).clone(true);
   const parts = {};
   for (const n of PART_NAMES) parts[n] = root.getObjectByName(n);
   root.scale.setScalar(L.scale || 1);
-  root.userData = { parts, look: L, phase: Math.random() * 6, jab: 1, lastAt: 0 };
+  root.userData = { parts, look: L, phase: Math.random() * 6, jab: 1, lastAt: 0, base: L.scale || 1 };
   return root;
 }
 
 // first-person forearm + weapon
 export function makeViewArm(L, kind) {
   const p = new PB(); forearmInto(p, L, kind);
-  return p.mesh(charMat(L));
+  return p.mesh(plainMat());
 }
 
 // st: { speed, attackT (1..0), castT (seconds left), castKind, pitch, big }
@@ -405,7 +417,8 @@ export function animateCharacter(root, st, dt, time) {
         p.legL.rotation.x = Math.sin(t) * 0.5; p.legR.rotation.x = -Math.sin(t) * 0.5;                                                               // full routine
     }
   }
-  const sc = (L.scale || 1) * (st.big || 1);
+  if (U.rig) U.rig.apply(p);
+  const sc = U.base * (st.big || 1);
   if (root.scale.x !== sc) root.scale.setScalar(sc);
 }
 
