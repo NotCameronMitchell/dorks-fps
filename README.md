@@ -2,7 +2,12 @@
 
 A 3v3 hero shooter for phones, starring the group chat. Runs in the browser (three.js), no app store needed.
 
-## Play / develop
+## Play
+
+Once GitHub Pages is switched on (Settings → Pages → Source: GitHub Actions), every push to `main` publishes the game at
+`https://<owner>.github.io/dorks-fps/`. Open that link on a phone.
+
+## Develop
 
 ```
 npm install
