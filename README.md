@@ -29,8 +29,8 @@ On a phone: hold it sideways, and use "Add to Home Screen" for full screen.
 | `src/maps.js` | Map layouts built from boxes and stairs. Add a map here. |
 | `src/looks.js` | How each friend looks: proportions, colours, hair, hats, glasses, painted face and shirt. |
 | `src/models.js` | Weapons, cats, projectiles, animation poses, and the old code-built characters (fallback only). |
-| `src/rig.js` | Loads the anime character models from `public/models` and drives their skeletons. |
-| `tools/anime/` | Script that builds each friend's model from the free VRoid sample avatars. |
+| `src/rig.js` | Loads the character models from `public/models` and drives their skeletons. |
+| `tools/lowpoly/` | Script that builds each friend's model from Quaternius' free low-poly character pack. |
 | `src/game.js` | Match simulation: movement, damage, projectiles, zones, objective. |
 | `src/world.js` | Collision, raycasts, navigation grid and pathfinding. |
 | `src/bots.js` | Bot AI. |

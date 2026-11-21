@@ -22,6 +22,9 @@ const ALIAS = {
   J_Bip_L_UpperArm: 'upperarm_l', J_Bip_L_LowerArm: 'lowerarm_l', J_Bip_L_Hand: 'hand_l', J_Bip_R_UpperArm: 'upperarm_r', J_Bip_R_LowerArm: 'lowerarm_r', J_Bip_R_Hand: 'hand_r',
   J_Bip_L_UpperLeg: 'thigh_l', J_Bip_L_LowerLeg: 'calf_l', J_Bip_L_Foot: 'foot_l', J_Bip_R_UpperLeg: 'thigh_r', J_Bip_R_LowerLeg: 'calf_r', J_Bip_R_Foot: 'foot_r',
   J_Bip_L_ToeBase: 'ball_l',
+  // Quaternius low-poly pack (the loader strips the dots from names like "UpperArm.L")
+  Torso: 'spine_01', Head: 'head', UpperArmL: 'upperarm_l', LowerArmL: 'lowerarm_l', FistL: 'hand_l', UpperArmR: 'upperarm_r', LowerArmR: 'lowerarm_r', FistR: 'hand_r',
+  UpperLegL: 'thigh_l', LowerLegL: 'calf_l', FootL: 'foot_l', UpperLegR: 'thigh_r', LowerLegR: 'calf_r', FootR: 'foot_r',
 };
 let grad = null;
 function gradient() {
@@ -36,9 +39,14 @@ function prepare(gltf) {
   const anime = !!(gltf.parser.json.extensions && (gltf.parser.json.extensions.VRM || gltf.parser.json.extensions.VRMC_vrm)) || gltf.parser.json.nodes.some((n) => n.name === 'J_Bip_C_Hips');
   gltf.scene.traverse((o) => { if (ALIAS[o.name]) o.name = ALIAS[o.name]; });
   proto.updateMatrixWorld(true);
-  // the game faces -Z: turn the model round if its toes point the other way
+  // some rigs keep feet/hands as separate IK handles; hang them off the limb so they follow it
+  for (const [child, parent] of [['foot_l', 'calf_l'], ['foot_r', 'calf_r'], ['hand_l', 'lowerarm_l'], ['hand_r', 'lowerarm_r']]) {
+    const c = gltf.scene.getObjectByName(child), p = gltf.scene.getObjectByName(parent);
+    if (c && p && c.parent !== p) p.attach(c);
+  }
+  // the game faces -Z: models face +Z unless their toes say otherwise
   const foot = gltf.scene.getObjectByName('foot_l'), toe = gltf.scene.getObjectByName('ball_l');
-  if (foot && toe && toe.getWorldPosition(new V3()).z > foot.getWorldPosition(new V3()).z) gltf.scene.rotation.y = Math.PI;
+  if (!(foot && toe) || toe.getWorldPosition(new V3()).z > foot.getWorldPosition(new V3()).z) gltf.scene.rotation.y = Math.PI;
   proto.updateMatrixWorld(true);
   // cheap unlit-ish materials instead of PBR
   gltf.scene.traverse((o) => {

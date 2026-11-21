@@ -348,7 +348,7 @@ export function makeCharacter(L) {
     for (const [side, kind] of [['r', L.weapon], ['l', L.offhand]]) {
       if (!kind) continue;
       const p = new PB(); weaponInto(p, kind);
-      human.rig.hold(side, p.mesh(plainMat()), (L.scale || 1) / human.scale);
+      human.rig.hold(side, p.mesh(plainMat()), 1.55 * (L.scale || 1) / human.scale);
     }
     if (L.wide) human.parts.body.scale.set(L.wide, 1, L.wide);
     human.root.userData = { parts: human.parts, rig: human.rig, look: L, phase: Math.random() * 6, jab: 1, lastAt: 0, base: 1 };
