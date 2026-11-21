@@ -1,0 +1,10 @@
+{
+  "name": "DORKS",
+  "short_name": "DORKS",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0b0d1a",
+  "theme_color": "#0b0d1a",
+  "start_url": ".",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
